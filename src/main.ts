@@ -1,16 +1,33 @@
-import { BACKGROUND_PARALLAX_RATIO } from "./constants/constants";
+import {
+  BACKGROUND_PARALLAX_RATIO,
+  CLOUDS_PARALLAX_RATIO,
+  HILLS_HEIGHT,
+  LARGE_GAP,
+  PLATFORM_LARGE_DIMENSION,
+  PLATFORM_LARGE_TALL_DIMENSION,
+  PLATFORM_MEDIUM_DIMENSION,
+  PLATFORM_SMALL_DIMENSION,
+  PLATFORM_SMALL_TALL_DIMENSION,
+  SMALL_GAP,
+} from "./constants/constants";
 import platform from "../public/Sprites/platform.png";
+import platformSmall from "../public/Sprites/platformS.png";
+import platformMedium from "../public/Sprites/platformM.png";
+import platformLarge from "../public/Sprites/platformL.png";
 import platformSmallTall from "../public/Sprites/platformSmallTall.png";
-import hills from "../public/Sprites/hills1.webp";
+import platformLargeTall from "../public/Sprites/platformLargeTall.png";
+
+import hills from "../public/Sprites/hills1.png";
+import clouds1 from "../public/Sprites/clouds1.png";
 import background from "../public/Sprites/backgroundYellow.png";
 import block from "../public/mySprites/singleBlock.png";
 import block3 from "../public/mySprites/trioBlock.png";
 import gem from "../public/mySprites/gemFlower.png";
+import flag from "../public/mySprites/flag.png";
 
 import {
   bulletEnemyCollision,
   getImage,
-  getImageAsync,
   hittingBlockSides,
   hittintBlockBottom,
   isCircleAbovePlatform,
@@ -28,6 +45,7 @@ import { Burst } from "./classes/Enemy-burst";
 import { Block } from "./classes/blockPlatform";
 import { Gem } from "./classes/Gem";
 import { Bullet } from "./classes/bullet";
+import { DisplayElement } from "./classes/Stats";
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const c = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -35,6 +53,7 @@ canvas.width = 1024;
 canvas.height = 576;
 
 let genericObjects: GenericObject[] = [];
+
 let player = new Player();
 let platforms: Platform[] = [];
 let ememies: Enemy[] = [];
@@ -43,6 +62,8 @@ let blocks: Block[] = [];
 let lastKey: string;
 let gems: Gem[] = [];
 let bullets: Bullet[] = [];
+let Flag = new GenericObject({ x: 5385, y: 0 }, flag, 0);
+let stats = new DisplayElement({ x: 10, y: 10 }, 0, 0);
 let keys = {
   right: {
     pressed: false,
@@ -57,42 +78,165 @@ let keys = {
 let scrollOffset = 0;
 
 async function init() {
-  const platformImg: HTMLImageElement = await getImageAsync(platform);
-  const platformSmallTallImg = await getImageAsync(platformSmallTall);
+  /*
+  Map Abbrebiations
+  p-platform 
+  g-gap
+  s-small
+  m-medium
+  l-large
+  st-smallTall
+  lt-largeTall
+  */
+  const gameMapPlatforms = [
+    "pl",
+    "gs",
+    "pm",
+    "gl",
+    "pst",
+    "gs",
+    "plt",
+    "gs",
+    "pst",
+    "gs",
+    "pst",
+    "gl",
+    "plt",
+    "gs",
+    "pl",
+  ];
+
+  let platformWidthCounter = 0;
+  platforms = [];
+  Flag.position.x = 5385;
+  gameMapPlatforms.forEach((Abbrebiation) => {
+    switch (Abbrebiation) {
+      case "ps": {
+        platforms.push(
+          new Platform(
+            {
+              x: platformWidthCounter,
+              y: canvas.height - PLATFORM_SMALL_DIMENSION.height,
+            },
+            platformSmall,
+            PLATFORM_SMALL_DIMENSION.width,
+            PLATFORM_SMALL_DIMENSION.height,
+            platformWidthCounter
+          )
+        );
+        platformWidthCounter += PLATFORM_SMALL_DIMENSION.width;
+        break;
+      }
+      case "pm": {
+        platforms.push(
+          new Platform(
+            {
+              x: platformWidthCounter,
+              y: canvas.height - PLATFORM_MEDIUM_DIMENSION.height,
+            },
+            platformMedium,
+            PLATFORM_MEDIUM_DIMENSION.width,
+            PLATFORM_MEDIUM_DIMENSION.height,
+            platformWidthCounter
+          )
+        );
+        platformWidthCounter += PLATFORM_MEDIUM_DIMENSION.width;
+        break;
+      }
+      case "pl": {
+        platforms.push(
+          new Platform(
+            {
+              x: platformWidthCounter,
+              y: canvas.height - PLATFORM_LARGE_DIMENSION.height,
+            },
+            platformLarge,
+            PLATFORM_LARGE_DIMENSION.width,
+            PLATFORM_LARGE_DIMENSION.height,
+            platformWidthCounter
+          )
+        );
+        platformWidthCounter += PLATFORM_LARGE_DIMENSION.width;
+        break;
+      }
+      case "pst": {
+        platforms.push(
+          new Platform(
+            {
+              x: platformWidthCounter,
+              y: canvas.height - PLATFORM_SMALL_TALL_DIMENSION.height,
+            },
+            platformSmallTall,
+            PLATFORM_SMALL_TALL_DIMENSION.width,
+            PLATFORM_SMALL_TALL_DIMENSION.height,
+            platformWidthCounter
+          )
+        );
+        platformWidthCounter += PLATFORM_SMALL_TALL_DIMENSION.width;
+        break;
+      }
+      case "plt": {
+        platforms.push(
+          new Platform(
+            {
+              x: platformWidthCounter,
+              y: canvas.height - PLATFORM_LARGE_TALL_DIMENSION.height,
+            },
+            platformLargeTall,
+            PLATFORM_LARGE_TALL_DIMENSION.width,
+            PLATFORM_LARGE_TALL_DIMENSION.height,
+            platformWidthCounter
+          )
+        );
+        platformWidthCounter += PLATFORM_LARGE_TALL_DIMENSION.width;
+        break;
+      }
+      case "gs": {
+        platformWidthCounter += SMALL_GAP;
+        break;
+      }
+      case "gl": {
+        platformWidthCounter += LARGE_GAP;
+        break;
+      }
+    }
+  });
 
   genericObjects = [
-    new GenericObject({ x: 0, y: 0 }, background),
-    new GenericObject({ x: 0, y: 0 }, hills),
+    new GenericObject({ x: 0, y: 0 }, background, BACKGROUND_PARALLAX_RATIO),
+    new GenericObject({ x: -100, y: 0 }, clouds1, CLOUDS_PARALLAX_RATIO),
+    new GenericObject(
+      { x: 0, y: canvas.height - HILLS_HEIGHT },
+      hills,
+      BACKGROUND_PARALLAX_RATIO
+    ),
   ];
 
   player = new Player();
 
   ememies = [
-    new Enemy({ position: { x: 1000, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 400, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 1350, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 2400, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 3374, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 5300, y: 50 }, velocity: { x: -1, y: 0 } }),
   ];
   enemyBursts = [];
-  platforms = [
-    new Platform(
-      {
-        x: platformImg.width * 4 + 980 - platformSmallTallImg.width,
-        y: 255,
-      },
-      platformSmallTall
-    ),
-    new Platform({ x: 0, y: 455 }, platform),
-    new Platform({ x: platformImg.width * 1, y: 455 }, platform),
-    new Platform({ x: platformImg.width * 2 + 200, y: 455 }, platform),
-    new Platform({ x: platformImg.width * 3 + 400, y: 455 }, platform),
-    new Platform({ x: platformImg.width * 4 + 400, y: 455 }, platform),
-    new Platform({ x: platformImg.width * 5 + 800, y: 455 }, platform),
-  ];
 
   blocks = [
     new Block({ x: 200, y: 255 }, block, 80, 80),
     new Block({ x: 400, y: 255 }, block3, 80 * 3, 80),
+    new Block({ x: 4300, y: 355 }, block3, 80 * 3, 80),
+    new Block({ x: 3474, y: 355 }, block, 80, 80),
+    new Block({ x: 1700, y: 355 }, block, 80, 80),
+    new Block({ x: 200, y: 255 }, block, 80, 80),
   ];
 
-  gems = [new Gem({ x: 1000, y: 0 }, { x: 0, y: 0 }, gem)];
+  gems = [
+    new Gem({ x: 1200, y: 0 }, { x: 0, y: 0 }, gem),
+    new Gem({ x: 2747, y: 0 }, { x: 0, y: 0 }, gem),
+    new Gem({ x: 3374, y: 0 }, { x: 0, y: 0 }, gem),
+  ];
 
   scrollOffset = 0;
 }
@@ -101,6 +245,11 @@ function animate() {
   c.clearRect(0, 0, canvas.width, canvas.height);
 
   genericObjects.forEach((object) => object.draw(c));
+  Flag.draw(c);
+
+  stats.draw(c);
+  stats.lives = player.life;
+
   platforms.forEach((platform) => platform.draw(c));
 
   player.update(c, canvas);
@@ -165,7 +314,7 @@ function animate() {
   gems.forEach((gem, index) => {
     gem.update(c);
     if (rectangularCollisionDetection(player, gem)) {
-      console.log("gem collected"); 
+      console.log("gem collected");
       player.life += 1;
       gems.splice(index, 1);
       player.velocity.y = -5;
@@ -181,7 +330,7 @@ function animate() {
         new Bullet(
           {
             x: player.position.x + player.width,
-            y: player.position.y + player.height/2 +10,
+            y: player.position.y + player.height / 2 + 10,
           },
           { x: 10, y: 0 },
           3
@@ -193,7 +342,7 @@ function animate() {
         new Bullet(
           {
             x: player.position.x,
-            y: player.position.y + player.height +10,
+            y: player.position.y + player.height + 10,
           },
           { x: -10, y: 0 },
           3
@@ -229,11 +378,11 @@ function animate() {
 
       enemyBursts.forEach((burst) => (burst.position.x -= player.speed));
       genericObjects.forEach(
-        (object) =>
-          (object.position.x -= player.speed * BACKGROUND_PARALLAX_RATIO)
+        (object) => (object.position.x -= player.speed * object.parallaxRatio)
       );
 
       gems.forEach((gem) => (gem.position.x -= player.speed));
+      Flag.position.x -= player.speed;
       scrollOffset += player.speed;
     } else if (keys.left.pressed && scrollOffset > 0) {
       platforms.forEach((platform) => (platform.position.x += player.speed));
@@ -242,11 +391,11 @@ function animate() {
       ememies.forEach((enemy) => (enemy.position.x += player.speed));
       enemyBursts.forEach((burst) => (burst.position.x += player.speed));
       genericObjects.forEach(
-        (object) =>
-          (object.position.x += player.speed * BACKGROUND_PARALLAX_RATIO)
+        (object) => (object.position.x += player.speed * object.parallaxRatio)
       );
 
       gems.forEach((gem) => (gem.position.x += player.speed));
+      Flag.position.x += player.speed;
       scrollOffset -= player.speed;
     }
   }
@@ -276,7 +425,7 @@ function animate() {
     });
 
     //to check the collision of enemy burst with the platform
-    enemyBursts.forEach((burst, index) => {
+    enemyBursts.forEach((burst) => {
       if (isCircleAbovePlatform(burst, platform)) {
         burst.position.y = platform.position.y - burst.radius;
         burst.velocity.y = -burst.velocity.y * burst.radius * 0.15;

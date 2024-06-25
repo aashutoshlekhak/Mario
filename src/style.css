@@ -7,17 +7,17 @@
 canvas {
   background-color: lightgray;
   border-radius: 10px;
-  border: 3px solid rgb(0, 76, 176);
+  border: 3px solid yellow;
 }
 
 #app {
   width: 100vw;
   height: 100vh;
-  background-image: url(../public/images/bodyBackground2.png);
+  background-image: url(../public/images/bodyBackgroundTexture.png);
+
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 
 body {

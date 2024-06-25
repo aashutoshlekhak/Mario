@@ -8,8 +8,9 @@ export class GenericObject {
   width: number;
   height: number;
   img: HTMLImageElement;
+  parallaxRatio: number;
 
-  constructor({ x, y }: { x: number; y: number }, img: string) {
+  constructor({ x, y }: { x: number; y: number }, img: string, parallaxRatio: number) {
     this.position = {
       x: x,
       y: y,
@@ -22,6 +23,7 @@ export class GenericObject {
       this.width = this.img.width;
       this.height = this.img.height;
     };
+    this.parallaxRatio = parallaxRatio;
   }
 
   draw(c: CanvasRenderingContext2D) {

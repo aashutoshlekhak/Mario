@@ -1,9 +1,9 @@
 import { GRAVITY, PLAYER_SPEED } from "../constants/constants";
 import { getImage } from "../utils/utils";
-import spriteRunLeft from "../../public/Sprites/playerWalkLeft.png";
-import spriteRunRight from "../../public/Sprites/playerWalkRight.png";
-import spriteStandLeft from "../../public/Sprites/playerStandLeft.png";
-import spriteStandRight from "../../public/Sprites/playerStandRight.png";
+import spriteRunLeft from "../../public/mySprites/playerRunLeft.png";
+import spriteRunRight from "../../public/mySprites/playerRunRight.png";
+import spriteStandLeft from "../../public/mySprites/playerStandLeft.png";
+import spriteStandRight from "../../public/mySprites/playerStandRight.png";
 
 export class Player {
   position: {
@@ -18,6 +18,7 @@ export class Player {
   };
   speed: number;
   frames: number;
+  frameCounter: number; // Counter to control animation speed
 
   sprites: {
     stand: {
@@ -50,24 +51,25 @@ export class Player {
       x: 0,
       y: 1,
     };
-    this.width = 66 * 1.5;
-    this.height = 65 * 1.5;
+    this.width = 80.125; // Player width in sprite 641 divided by 10
+    this.height = 67.75;
     this.speed = PLAYER_SPEED;
     this.frames = 0;
+    this.frameCounter = 0; // Initialize the frame counter
     this.sprites = {
       stand: {
-        cropWidth: 51,
+        cropWidth: 641,
         left: getImage(spriteStandLeft),
         right: getImage(spriteStandRight),
-        frames: 9,
-        width: 51,
+        frames: 10,
+        width: 66,
       },
       run: {
-        cropWidth: 51,
+        cropWidth: 641,
         left: getImage(spriteRunLeft),
         right: getImage(spriteRunRight),
-        frames: 9,
-        width: 71,
+        frames: 8,
+        width: 66,
       },
     };
     this.currentSprite = this.sprites.stand.right;
@@ -77,7 +79,7 @@ export class Player {
   }
 
   draw(c: CanvasRenderingContext2D) {
-    const gap = 22;
+    const gap = 80;
     const frameX = this.frames * (this.currentCropWidth + gap);
     if (this.respawningPeriod) {
       this.opacity == 1 ? (this.opacity = 0) : (this.opacity = 1);
@@ -91,7 +93,7 @@ export class Player {
       frameX,
       0,
       this.currentCropWidth,
-      58,
+      500,
       this.position.x,
       this.position.y,
       this.width,
@@ -101,20 +103,26 @@ export class Player {
   }
 
   update(c: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-    this.frames++;
-    if (
-      this.frames >= this.sprites.stand.frames &&
-      (this.currentSprite === this.sprites.stand.right ||
-        this.currentSprite === this.sprites.stand.left)
-    ) {
-      this.frames = 0;
-    } else if (
-      this.frames >= this.sprites.run.frames &&
-      (this.currentSprite === this.sprites.run.right ||
-        this.currentSprite === this.sprites.run.left)
-    ) {
-      this.frames = 0;
+    this.frameCounter++; // Increment the frame counter
+
+    if (this.frameCounter % 3 === 0) {
+      // Update the frame every 6th call
+      this.frames++;
+      if (
+        this.frames >= this.sprites.stand.frames &&
+        (this.currentSprite === this.sprites.stand.right ||
+          this.currentSprite === this.sprites.stand.left)
+      ) {
+        this.frames = 0;
+      } else if (
+        this.frames >= this.sprites.run.frames &&
+        (this.currentSprite === this.sprites.run.right ||
+          this.currentSprite === this.sprites.run.left)
+      ) {
+        this.frames = 0;
+      }
     }
+
     this.draw(c);
     this.position.y += this.velocity.y;
     this.position.x += this.velocity.x;

@@ -1,4 +1,4 @@
-import { GRAVITY } from "../constants/constants";
+
 import { Position, Velocity } from "../types/types";
 
 export class Bullet {

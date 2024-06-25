@@ -8,12 +8,14 @@ export class Platform {
   width: number;
   height: number;
   img: HTMLImageElement;
+  distance?: number;
 
   constructor(
     { x, y }: { x: number; y: number },
     img: string,
     width?: number,
-    height?: number
+    height?: number,
+    distance?: number
   ) {
     this.position = {
       x: x,
@@ -23,6 +25,7 @@ export class Platform {
     this.img = getImage(img);
     this.width = width || 200;
     this.height = height || 20;
+    this.distance = distance;
     this.img.onload = () => {
       if (!width) this.width = this.img.width;
       if (!height) this.height = this.img.height;
@@ -37,5 +40,11 @@ export class Platform {
       this.width,
       this.height
     );
+
+    if (this.distance !== undefined) {
+      c.font = "30px serif";
+      c.fillStyle = "red";
+      c.fillText(`${this.distance}`, this.position.x, this.position.y - 10); // Adjusted position for better visibility
+    }
   }
 }
