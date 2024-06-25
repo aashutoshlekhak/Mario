@@ -54,14 +54,6 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const c = canvas.getContext("2d") as CanvasRenderingContext2D;
 canvas.width = CANVAS_DIMENSIONS.WIDTH;
 canvas.height = CANVAS_DIMENSIONS.HEIGHT;
-const startScreen = document.getElementById("start-screen") as HTMLDivElement;
-const endScreen = document.getElementById("end-screen") as HTMLDivElement;
-const startButton = document.getElementById(
-  "start-button"
-) as HTMLButtonElement;
-const restartButton = document.getElementById(
-  "restart-button"
-) as HTMLButtonElement;
 let isPaused: boolean = false;
 let genericObjects: GenericObject[] = [];
 let player = new Player();
@@ -114,10 +106,6 @@ async function init() {
   st-smallTall
   lt-largeTall
   */
-
-  startScreen.style.display = "none";
-  endScreen.style.display = "none";
-  canvas.style.display = "block";
   const gameMapPlatforms = [
     "pl",
     "gs",
@@ -326,9 +314,6 @@ async function level2init() {
   st-smallTall
   lt-largeTall
   */
-  startScreen.style.display = "none";
-  endScreen.style.display = "none";
-  canvas.style.display = "block";
   const gameMapPlatforms = [
     "pl",
     "gs",
@@ -911,13 +896,4 @@ addEventListener("keyup", ({ code }) => {
     case "Space":
       keys.space.pressed = false;
   }
-});
-
-
-startButton.addEventListener("click", () => {
-  selectLevel(1);
-});
-
-restartButton.addEventListener("click", () => {
-  selectLevel(1); 
 });
