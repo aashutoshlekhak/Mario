@@ -1,6 +1,7 @@
 import { Enemy } from "../classes/Enemy";
 import { Platform } from "../classes/Platform";
 import { Player } from "../classes/Player";
+import { WaterEnemy } from "../classes/WaterEnemy";
 import { Block } from "../classes/blockPlatform";
 import { Bullet } from "../classes/bullet";
 
@@ -47,7 +48,7 @@ export function playerOnTopEnemy(player: Player, enemy: Enemy) {
   );
 }
 
-export function playerOnSideEnemy(player: Player, enemy: Enemy) {
+export function playerOnSideEnemy(player: Player, enemy: Enemy|WaterEnemy) {
   return (
     player.position.x + player.width >= enemy.position.x &&
     player.position.x <= enemy.position.x + enemy.width &&

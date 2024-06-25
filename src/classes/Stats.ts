@@ -13,13 +13,15 @@ export class DisplayElement {
   heartImg: HTMLImageElement;
   coins: number;
   lives: number;
+  isPaused: boolean;
 
   constructor(
     { x, y }: { x: number; y: number },
     coins: number,
-    lives: number
+    lives: number,
+    isPaused: boolean
   ) {
-    this.width = 300; // Increased width
+    this.width = 230; // Increased width
     this.height = 120; // Adjusted height
     this.position = {
       x: x,
@@ -30,52 +32,28 @@ export class DisplayElement {
     this.heartImg = getImage(heartImage);
     this.coins = coins;
     this.lives = lives;
+    this.isPaused = isPaused;
   }
 
   draw(c: CanvasRenderingContext2D) {
-    // Draw semi-transparent box with border radius and border color
     c.fillStyle = "rgba(0, 0, 0, 0.5)";
-    c.strokeStyle = "rgba(255, 255, 255, 0.8)"; // White border
+    c.strokeStyle = "rgba(255, 255, 255, 0.8)";
     c.lineWidth = 2;
 
-    // Rounded rectangle path
+  
     c.beginPath();
-    c.moveTo(this.position.x + 10, this.position.y);
-    c.lineTo(this.position.x + this.width - 10, this.position.y);
-    c.quadraticCurveTo(
-      this.position.x + this.width,
-      this.position.y,
-      this.position.x + this.width,
-      this.position.y + 10
-    );
-    c.lineTo(this.position.x + this.width, this.position.y + this.height - 10);
-    c.quadraticCurveTo(
-      this.position.x + this.width,
-      this.position.y + this.height,
-      this.position.x + this.width - 10,
-      this.position.y + this.height
-    );
-    c.lineTo(this.position.x + 10, this.position.y + this.height);
-    c.quadraticCurveTo(
-      this.position.x,
-      this.position.y + this.height,
-      this.position.x,
-      this.position.y + this.height - 10
-    );
-    c.lineTo(this.position.x, this.position.y + 10);
-    c.quadraticCurveTo(
-      this.position.x,
-      this.position.y,
-      this.position.x + 10,
-      this.position.y
-    );
+    c.moveTo(this.position.x , this.position.y);
+    c.lineTo(this.position.x + this.width , this.position.y);
+    c.lineTo(this.position.x + this.width, this.position.y + this.height );
+    c.lineTo(this.position.x , this.position.y + this.height);
+    c.lineTo(this.position.x, this.position.y );
     c.closePath();
 
-    // Fill and stroke
+    
     c.fill();
     c.stroke();
 
-    // Set text style for coins
+  
     c.fillStyle = "yellow";
     c.font = "bold 24px Arial"; // Game theme bold font
 

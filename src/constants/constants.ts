@@ -1,3 +1,7 @@
+export const CANVAS_DIMENSIONS={
+  WIDTH: 1024,
+  HEIGHT: 576,
+}
 export const GRAVITY = 0.6;
 export const PLAYER_SPEED = 8;
 export const BACKGROUND_PARALLAX_RATIO = 0.5;

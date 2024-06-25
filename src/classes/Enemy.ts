@@ -35,7 +35,7 @@ export class Enemy {
       position,
       velocity,
     }: {
-      position: { x: number; y: number }; //yo position ko
+      position: { x: number; y: number }; 
       velocity: { x: number; y: number };
     },
     distance = {
