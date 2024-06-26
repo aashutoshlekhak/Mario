@@ -1,5 +1,5 @@
 import { GRAVITY } from "../constants/constants";
-import scorpioWalkLeft from "../../public/mySprites/scorpioWalkLeft.png";
+import waterEnemyImage from "../../public/mySprites/water.png"
 import { getImage } from "../utils/utils";
 
 export class WaterEnemy {
@@ -41,24 +41,24 @@ export class WaterEnemy {
       y: velocity.y,
     };
     this.velocityY = velocityY;
-    this.width = 70;
+    this.width = 50;
     this.height = 50;
     this.bottomLimit = bottomLimit;
-    this.sprite = getImage(scorpioWalkLeft);
+    this.sprite = getImage(waterEnemyImage);
     this.currentSprite = this.sprite;
     this.currentFrameIndex = 0;
     this.frameCounter = 0;
-    this.totalFrames = 4;
+    this.totalFrames = 2;
   }
 
   draw(c: CanvasRenderingContext2D) {
-    const frameX = 4.4 + 48 * this.currentFrameIndex;
+    const frameX = 17 + 34 * this.currentFrameIndex;
     c.drawImage(
       this.currentSprite,
       frameX,
       17,
-      40,
-      30,
+      14,
+      15,
       this.position.x,
       this.position.y,
       this.width,
@@ -68,7 +68,7 @@ export class WaterEnemy {
 
   update(c: CanvasRenderingContext2D) {
     this.frameCounter++;
-    if (this.frameCounter % 5 === 0) {
+    if (this.frameCounter % 2 === 0) {
       this.currentFrameIndex++;
 
       if (this.currentFrameIndex >= this.totalFrames) {

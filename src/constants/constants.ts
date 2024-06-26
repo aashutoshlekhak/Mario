@@ -28,7 +28,8 @@ export const PLATFORM_SMALL_TALL_DIMENSION = {
   height: 204,
 };
 export const SMALL_GAP = 300;
-export const LARGE_GAP = 600;
+export const MEDIUM_GAP = 500;
+export const LARGE_GAP = 800;
 
 export const SMALL_BLOCK = {
   width: 80,

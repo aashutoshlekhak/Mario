@@ -4,6 +4,7 @@ import {
   CLOUDS_PARALLAX_RATIO,
   HILLS_HEIGHT,
   LARGE_GAP,
+  MEDIUM_GAP,
   PLATFORM_LARGE_DIMENSION,
   PLATFORM_LARGE_TALL_DIMENSION,
   PLATFORM_MEDIUM_DIMENSION,
@@ -54,6 +55,16 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const c = canvas.getContext("2d") as CanvasRenderingContext2D;
 canvas.width = CANVAS_DIMENSIONS.WIDTH;
 canvas.height = CANVAS_DIMENSIONS.HEIGHT;
+
+const startScreen = document.getElementById("start-screen") as HTMLDivElement;
+const endScreen = document.getElementById("end-screen") as HTMLDivElement;
+const startButton = document.getElementById(
+  "start-button"
+) as HTMLButtonElement;
+const restartButton = document.getElementById(
+  "restart-button"
+) as HTMLButtonElement;
+
 let isPaused: boolean = false;
 let genericObjects: GenericObject[] = [];
 let player = new Player();
@@ -67,7 +78,7 @@ let coins: Gem[] = [];
 let coinCount = 0;
 let bullets: Bullet[] = [];
 let waterEnemies: WaterEnemy[] = [];
-let Flag = new GenericObject({ x: 5385, y: 0 }, flag, 0);
+let Flag = new GenericObject({ x: 5000, y: 0 }, flag, 0);
 let stats = new DisplayElement({ x: 10, y: 10 }, 0, 0, isPaused);
 let keys = {
   right: {
@@ -81,9 +92,12 @@ let keys = {
   },
 };
 let scrollOffset = 0;
-let currentLevel = 2;
+let currentLevel = 1;
 
 function selectLevel(level: number) {
+  startScreen.style.display = "none";
+  endScreen.style.display = "none";
+  canvas.style.display = "block";
   switch (level) {
     case 1: {
       init();
@@ -95,34 +109,42 @@ function selectLevel(level: number) {
     }
   }
 }
+
 async function init() {
-  /*
-  Map Abbrebiations
-  p-platform 
-  g-gap
-  s-small
-  m-medium
-  l-large
-  st-smallTall
-  lt-largeTall
-  */
+  startScreen.style.display = "none";
+  endScreen.style.display = "none";
+  canvas.style.display = "block";
   const gameMapPlatforms = [
-    "pl",
-    "gs",
-    "pm",
-    "gl",
-    "pst",
-    "gs",
-    "plt",
-    "gs",
-    "pst",
-    "gs",
-    "pst",
-    "gl",
-    "plt",
-    "gs",
+    "pl", // Platform Large - length: 852, start: 0
+    "gs", // Gap Small - length: 300, start: 852
+    "pm", // Platform Medium - length: 453, start: 1152
+    "gm", // Gap Medium - length: 500, start: 1605
+    "pst", // Platform Small Tall - length: 242, start: 2105
+    "gs", // Gap Small - length: 300, start: 2347
+    "plt", // Platform Large Tall - length: 227, start: 2647
+    "gs", // Gap Small - length: 300, start: 2874
+    "pst", // Platform Small Tall - length: 242, start: 3174
+    "gs", // Gap Small - length: 300, start: 3416
+    "pst", // Platform Small Tall - length: 242, start: 3716
+    "gl", // Gap Large - length: 800, start: 3958
+    "plt", // Platform Large Tall - length: 227, start: 4758
+    "gs", // Gap Small - length: 300, start: 4985
+    "pl", // Platform Large - length: 852, start: 5285
+    "gm", // Gap Medium - length: 500, start: 6137
+    "pm", // Platform Medium - length: 453, start: 6637
+    "gl", // Gap Large - length: 800, start: 7090
+    "pl", // Platform Large - length: 852, start: 7890
+    "gl", // Gap Large - length: 800, start: 8742
+    "pst", // Platform Small Tall - length: 242, start: 9542
+    "gs", // Gap Small - length: 300, start: 9784
+    "pl", // Platform Large - length: 852, start: 10084
+    "gl", // Gap Large - length: 800, start: 10936
+    "plt", // Platform Large Tall - length: 227, start: 11736
+    "gs", // Gap Small - length: 300, start: 11963
+    "pl", // Platform Medium - length: 453, start: 12263
     "pl",
   ];
+
   player = new Player();
   keys = {
     right: {
@@ -138,7 +160,11 @@ async function init() {
   scrollOffset = 0;
   let platformWidthCounter = 0;
   platforms = [];
-  Flag.position.x = 5385;
+  /* The above code is attempting to set the x-coordinate of the position of a flag to 5385 in a
+  TypeScript program. However, the code seems to be incorrect as it is using a mix of different
+  syntax elements from different programming languages. The correct way to set the x-coordinate of a
+  position in TypeScript would be something like: */
+  // Flag.position.x = 5385;
   gameMapPlatforms.forEach((Abbrebiation) => {
     switch (Abbrebiation) {
       case "ps": {
@@ -225,6 +251,10 @@ async function init() {
         platformWidthCounter += SMALL_GAP;
         break;
       }
+      case "gm": {
+        platformWidthCounter += MEDIUM_GAP;
+        break;
+      }
       case "gl": {
         platformWidthCounter += LARGE_GAP;
         break;
@@ -243,20 +273,95 @@ async function init() {
   ];
 
   player = new Player();
-
   ememies = [
-    new Enemy({ position: { x: 400, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 1350, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 2400, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 3374, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 5300, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 400, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 1252, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 2780, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 3274, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 3916, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 4858, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 5385, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 5585, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 6750, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 8000, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 9750, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 10384, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 11936, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 12563, y: 315 }, velocity: { x: -1, y: 0 } }),
+
+    //for blocks
+    new Enemy({ position: { x: 4360, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 6400, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 7350, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 1150, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 11500, y: 315 }, velocity: { x: -1, y: 0 } }),
   ];
+
   enemyBursts = [];
 
   waterEnemies = [
+    // Gap at start: 852 (gs)
     new WaterEnemy(
       {
-        position: { x: 300, y: 780 },
+        position: { x: 1000, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
+
+    // Gap at start: 1605 (gm)
+    new WaterEnemy(
+      {
+        position: { x: 1800, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 2347 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 2500, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+    new WaterEnemy(
+      {
+        position: { x: 2600, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
+
+    // Gap at start: 2874 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 3000, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 3416 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 3600, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+
+    // Gap at start: 3958 (gl)
+    new WaterEnemy(
+      {
+        position: { x: 4200, y: 780 },
         velocity: { x: 0, y: 0 },
       },
       -15,
@@ -264,7 +369,36 @@ async function init() {
     ),
     new WaterEnemy(
       {
-        position: { x: 400, y: 660 },
+        position: { x: 4400, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 4985 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 5100, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+
+    // Gap at start: 6137 (gm)
+
+    new WaterEnemy(
+      {
+        position: { x: 6237, y: 780 },
+        velocity: { x: 1000, y: 0 },
+      },
+      -15,
+      400
+    ),
+    new WaterEnemy(
+      {
+        position: { x: 6337, y: 660 },
         velocity: { x: 0, y: 0 },
       },
       -15,
@@ -272,32 +406,136 @@ async function init() {
     ),
     new WaterEnemy(
       {
-        position: { x: 500, y: 540 },
+        position: { x: 6437, y: 540 },
         velocity: { x: 0, y: 0 },
       },
       -15,
       440
     ),
+
+    // Gap at start: 7090 (gl)
+    new WaterEnemy(
+      {
+        position: { x: 7300, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+    new WaterEnemy(
+      {
+        position: { x: 7500, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+
+    // Gap at start: 8742 (gl)
+    new WaterEnemy(
+      {
+        position: { x: 9000, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
+
+    // Gap at start: 9784 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 9900, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 10936 (gl)
+    new WaterEnemy(
+      {
+        position: { x: 11100, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+
+    // Gap at start: 11963 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 12100, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
   ];
 
   blocks = [
-    new Block({ x: 200, y: 255 }, block, 80, 80),
-    new Block({ x: 400, y: 255 }, block3, 80 * 3, 80),
-    new Block({ x: 4300, y: 355 }, block3, 80 * 3, 80),
-    new Block({ x: 3474, y: 355 }, block, 80, 80),
-    new Block({ x: 1700, y: 355 }, block, 80, 80),
-    new Block({ x: 200, y: 255 }, block, 80, 80),
+    new Block({ x: 100, y: 255 }, block3, 80 * 3, 80),
+    new Block({ x: 1750, y: 395 }, block, 80, 80),
+
+    new Block({ x: 4100, y: 295 }, block, 80, 80),
+    new Block({ x: 4350, y: 295 }, block3, 80 * 3, 80),
+
+    new Block({ x: 6230, y: 395 }, block3, 240, 80),
+
+    new Block({ x: 7200, y: 350 }, block3, 240, 80),
+    new Block({ x: 7700, y: 395 }, block, 80, 80),
+
+    new Block({ x: 9000, y: 395 }, block3, 240, 80),
+
+    new Block({ x: 11100, y: 395 }, block, 80, 80),
+    new Block({ x: 11300, y: 395 }, block3, 80 * 3, 80),
   ];
 
   gems = [
     new Gem({ x: 1200, y: 0 }, { x: 0, y: 0 }, gem),
-    new Gem({ x: 2747, y: 0 }, { x: 0, y: 0 }, gem),
+    new Gem({ x: 6330, y: 0 }, { x: 0, y: 0 }, gem),
+    new Gem({ x: 6237, y: 0 }, { x: 0, y: 0 }, gem),
     new Gem({ x: 3374, y: 0 }, { x: 0, y: 0 }, gem),
+    new Gem({ x: 11000, y: 0 }, { x: 0, y: 0 }, gem),
   ];
+
   coins = [
-    new Gem({ x: 500, y: 0 }, { x: 0, y: 0 }, coin),
-    new Gem({ x: 2747, y: 0 }, { x: 0, y: 0 }, coin),
-    new Gem({ x: 3374, y: 0 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 500, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 1747, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 2747, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 3374, y: 395 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 4700, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 5374, y: 395 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 6200, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 7200, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 8200, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 9200, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 9742, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 11736, y: 395 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 12263, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 13500, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 13850, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 15850, y: 355 }, { x: 0, y: 0 }, coin),
+
+    new Gem({ x: 400, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 1252, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 2780, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 3274, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 3916, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 4858, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 5385, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 5585, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 6750, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 8000, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 9750, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 10384, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 11936, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 12563, y: 355 }, { x: 0, y: 0 }, coin),
+
+    new Gem({ x: 4360, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 6400, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 7350, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 1150, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 11500, y: 355 }, { x: 0, y: 0 }, coin),
   ];
 
   scrollOffset = 0;
@@ -315,22 +553,25 @@ async function level2init() {
   lt-largeTall
   */
   const gameMapPlatforms = [
+    "pl", // Platform Large - length: 852, start: 0
+    "gs", // Gap Small - length: 300, start: 852
+    "pm", // Platform Medium - length: 453, start: 1152
+    "gm", // Gap Medium - length: 500, start: 1605
+    "pst", // Platform Small Tall - length: 242, start: 2105
+    "gs", // Gap Small - length: 300, start: 2347
+    "plt", // Platform Large Tall - length: 227, start: 2647
+    "gs", // Gap Small - length: 300, start: 2874
+    "pst", // Platform Small Tall - length: 242, start: 3174
+    "gs", // Gap Small - length: 300, start: 3416
+    "pst", // Platform Small Tall - length: 242, start: 3716
+    "gl", // Gap Large - length: 800, start: 3958
+    "plt", // Platform Large Tall - length: 227, start: 4758
+    "gs", // Gap Small - length: 300, start: 4985
+    "pl", // Platform Large - length: 852, start: 5285
     "pl",
-    "gs",
-    "pm",
-    "gl",
-    "pst",
-    "gs",
-    "plt",
-    "gs",
-    "pst",
-    "gs",
-    "pst",
-    "gl",
-    "plt",
-    "gs",
     "pl",
   ];
+
   player = new Player();
   keys = {
     right: {
@@ -346,7 +587,7 @@ async function level2init() {
   scrollOffset = 0;
   let platformWidthCounter = 0;
   platforms = [];
-  Flag.position.x = 5385;
+  Flag.position.x = 5500;
   gameMapPlatforms.forEach((Abbrebiation) => {
     switch (Abbrebiation) {
       case "ps": {
@@ -435,6 +676,10 @@ async function level2init() {
         platformWidthCounter += SMALL_GAP;
         break;
       }
+      case "gm": {
+        platformWidthCounter += MEDIUM_GAP;
+        break;
+      }
       case "gl": {
         platformWidthCounter += LARGE_GAP;
         break;
@@ -453,18 +698,79 @@ async function level2init() {
   player = new Player();
 
   ememies = [
-    new Enemy({ position: { x: 400, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 1350, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 2400, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 3374, y: 50 }, velocity: { x: -1, y: 0 } }),
-    new Enemy({ position: { x: 5300, y: 50 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 400, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 1252, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 2780, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 3274, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 3916, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 4858, y: 315 }, velocity: { x: -1, y: 0 } }),
+    new Enemy({ position: { x: 5385, y: 315 }, velocity: { x: -1, y: 0 } }),
   ];
   enemyBursts = [];
 
   waterEnemies = [
+    // Gap at start: 852 (gs)
     new WaterEnemy(
       {
-        position: { x: 300, y: 780 },
+        position: { x: 1000, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
+
+    // Gap at start: 1605 (gm)
+    new WaterEnemy(
+      {
+        position: { x: 1800, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 2347 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 2500, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+    new WaterEnemy(
+      {
+        position: { x: 2600, y: 780 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      400
+    ),
+
+    // Gap at start: 2874 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 3000, y: 660 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      420
+    ),
+
+    // Gap at start: 3416 (gs)
+    new WaterEnemy(
+      {
+        position: { x: 3600, y: 540 },
+        velocity: { x: 0, y: 0 },
+      },
+      -15,
+      440
+    ),
+
+    // Gap at start: 3958 (gl)
+    new WaterEnemy(
+      {
+        position: { x: 4200, y: 780 },
         velocity: { x: 0, y: 0 },
       },
       -15,
@@ -472,15 +778,17 @@ async function level2init() {
     ),
     new WaterEnemy(
       {
-        position: { x: 400, y: 660 },
+        position: { x: 4400, y: 660 },
         velocity: { x: 0, y: 0 },
       },
       -15,
       420
     ),
+
+    // Gap at start: 4985 (gs)
     new WaterEnemy(
       {
-        position: { x: 500, y: 540 },
+        position: { x: 5100, y: 540 },
         velocity: { x: 0, y: 0 },
       },
       -15,
@@ -489,12 +797,10 @@ async function level2init() {
   ];
 
   blocks = [
-    new Block({ x: 200, y: 255 }, block, 80, 80),
-    new Block({ x: 400, y: 255 }, block3, 80 * 3, 80),
-    new Block({ x: 4300, y: 355 }, block3, 80 * 3, 80),
-    new Block({ x: 3474, y: 355 }, block, 80, 80),
-    new Block({ x: 1700, y: 355 }, block, 80, 80),
-    new Block({ x: 200, y: 255 }, block, 80, 80),
+    new Block({ x: 100, y: 255 }, block3, 80 * 3, 80),
+    new Block({ x: 1750, y: 395 }, block, 80, 80),
+    new Block({ x: 4100, y: 295 }, block, 80, 80),
+    new Block({ x: 4350, y: 295 }, block3, 80 * 3, 80),
   ];
 
   gems = [
@@ -504,9 +810,12 @@ async function level2init() {
   ];
 
   coins = [
-    new Gem({ x: 1200, y: 0 }, { x: 0, y: 0 }, coin),
-    new Gem({ x: 2747, y: 0 }, { x: 0, y: 0 }, coin),
-    new Gem({ x: 3374, y: 0 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 500, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 1747, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 2747, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 3374, y: 395 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 4700, y: 355 }, { x: 0, y: 0 }, coin),
+    new Gem({ x: 5374, y: 395 }, { x: 0, y: 0 }, coin),
   ];
 
   scrollOffset = 0;
@@ -523,7 +832,9 @@ function animate() {
   c.clearRect(0, 0, canvas.width, canvas.height);
 
   genericObjects.forEach((object) => object.draw(c));
-  Flag.draw(c);
+  if (currentLevel === 2) {
+    Flag.draw(c);
+  }
 
   stats.draw(c);
   stats.lives = player.life;
@@ -557,7 +868,7 @@ function animate() {
 
     //killing enemy when player is on top
     if (playerOnTopEnemy(player, enemy)) {
-      player.velocity.y = -15;
+      player.velocity.y = -10;
       audio.enemyKilled.play();
       for (let i = 0; i < 100; i++) {
         enemyBursts.push(
@@ -634,28 +945,33 @@ function animate() {
   //for shooting bullet
   if (keys.space.pressed) {
     if (lastKey === "right") {
-      bullets.push(
-        new Bullet(
-          {
-            x: player.position.x + player.width,
-            y: player.position.y + player.height / 2 + 10,
-          },
-          { x: 10, y: 0 },
-          3
-        )
-      );
+      //to only let the player to fire 1 bullet at once
+      if (bullets.length <= 2) {
+        bullets.push(
+          new Bullet(
+            {
+              x: player.position.x + player.width,
+              y: player.position.y + player.height / 2 + 10,
+            },
+            { x: 10, y: 0 },
+            3
+          )
+        );
+      }
     }
     if (lastKey === "left") {
-      bullets.push(
-        new Bullet(
-          {
-            x: player.position.x,
-            y: player.position.y + player.height + 10,
-          },
-          { x: -10, y: 0 },
-          3
-        )
-      );
+      if (bullets.length <= 2) {
+        bullets.push(
+          new Bullet(
+            {
+              x: player.position.x,
+              y: player.position.y + player.height / 2 + 10,
+            },
+            { x: -10, y: 0 },
+            3
+          )
+        );
+      }
     }
   }
 
@@ -822,9 +1138,15 @@ function animate() {
     player.width = player.sprites.stand.width;
   }
 
-  if (scrollOffset >= 5285) {
+  if (scrollOffset >= 12000) {
     currentLevel += 1;
     audio.level1CompleteSound.play();
+    selectLevel(currentLevel);
+  }
+
+  if (scrollOffset >= 5500 && currentLevel === 2) {
+    audio.level2CompleteSound.play();
+    alert("Level 2 Completed");
     selectLevel(currentLevel);
   }
 
@@ -846,7 +1168,10 @@ addEventListener("keydown", ({ code }) => {
   switch (code) {
     case "ArrowUp":
     case "KeyW":
-      player.velocity.y = -15;
+      if (player.velocity.y === 0) {
+        player.velocity.y = -15;
+        console.log("hello");
+      }
       audio.jumpSound.play();
       break;
     case "ArrowDown":
@@ -896,4 +1221,12 @@ addEventListener("keyup", ({ code }) => {
     case "Space":
       keys.space.pressed = false;
   }
+});
+
+startButton.addEventListener("click", () => {
+  selectLevel(currentLevel);
+});
+
+restartButton.addEventListener("click", () => {
+  selectLevel(currentLevel);
 });

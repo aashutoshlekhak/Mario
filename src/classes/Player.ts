@@ -74,7 +74,7 @@ export class Player {
     };
     this.currentSprite = this.sprites.stand.right;
     this.currentCropWidth = this.sprites.stand.cropWidth;
-    this.life = 3;
+    this.life = 100;
     this.respawningPeriod = false;
   }
 
